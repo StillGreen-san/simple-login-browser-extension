@@ -14,35 +14,41 @@ import ToggleButton from "vue-js-toggle-button";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import {
-  faRandom,
-  faExternalLinkAlt,
-  faTrash,
-  faLongArrowAltUp,
-  faChevronLeft,
-  faCopy,
-  faStar,
-  faSave,
-  faBug,
-  faQuestionCircle,
-  faCog,
-  faPaperPlane,
   faArrowLeft,
+  faBook,
+  faBug,
+  faChevronLeft,
+  faCog,
+  faCopy,
+  faGlobe,
+  faHashtag,
+  faExternalLinkAlt,
+  faLongArrowAltUp,
+  faPaperPlane,
+  faQuestionCircle,
+  faRandom,
+  faSave,
+  faStar,
+  faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 
 library.add(
-  faRandom,
-  faExternalLinkAlt,
-  faTrash,
-  faLongArrowAltUp,
-  faChevronLeft,
-  faCopy,
-  faStar,
-  faSave,
+  faArrowLeft,
+  faBook,
   faBug,
-  faQuestionCircle,
+  faChevronLeft,
   faCog,
+  faCopy,
+  faGlobe,
+  faHashtag,
+  faExternalLinkAlt,
+  faLongArrowAltUp,
   faPaperPlane,
-  faArrowLeft
+  faQuestionCircle,
+  faRandom,
+  faSave,
+  faStar,
+  faTrash
 );
 
 global.browser = require("webextension-polyfill");

@@ -93,8 +93,35 @@
           class="btn btn-outline-primary btn-sm"
           @click="createRandomAlias"
         >
+          <font-awesome-icon icon="hashtag" />
+          UUID
+        </button>
+        <button
+          :disabled="loading || !canCreate"
+          style="margin-left: 15px"
+          class="btn btn-outline-primary btn-sm"
+          @click="createRandomAlias"
+        >
+          <font-awesome-icon icon="book" />
+          Words
+        </button>
+        <button
+          :disabled="loading || !canCreate"
+          style="margin-left: 15px"
+          class="btn btn-outline-primary btn-sm"
+          @click="createRandomAlias"
+        >
+          <font-awesome-icon icon="globe" />
+          Domain
+        </button>
+        <button
+          :disabled="loading || !canCreate"
+          style="margin-left: 15px"
+          class="btn btn-outline-primary btn-sm"
+          @click="createRandomAlias"
+        >
           <font-awesome-icon icon="random" />
-          OR create a totally random alias
+          Random
         </button>
       </div>
 
