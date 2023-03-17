@@ -91,7 +91,7 @@
           :disabled="loading || !canCreate"
           style="margin-left: 15px"
           class="btn btn-outline-primary btn-sm"
-          @click="createRandomAlias"
+          @click="createAlias('UUID')"
         >
           <font-awesome-icon icon="hashtag" />
           UUID
@@ -100,7 +100,7 @@
           :disabled="loading || !canCreate"
           style="margin-left: 15px"
           class="btn btn-outline-primary btn-sm"
-          @click="createRandomAlias"
+          @click="createAlias('WORDS')"
         >
           <font-awesome-icon icon="book" />
           Words
@@ -109,7 +109,7 @@
           :disabled="loading || !canCreate"
           style="margin-left: 15px"
           class="btn btn-outline-primary btn-sm"
-          @click="createRandomAlias"
+          @click="createAlias('DOMAIN')"
         >
           <font-awesome-icon icon="globe" />
           Domain
@@ -118,7 +118,7 @@
           :disabled="loading || !canCreate"
           style="margin-left: 15px"
           class="btn btn-outline-primary btn-sm"
-          @click="createRandomAlias"
+          @click="createAlias('RANDOM')"
         >
           <font-awesome-icon icon="random" />
           Random
@@ -409,6 +409,96 @@ export default {
     async resetSearch() {
       this.searchString = "";
       await this.loadAlias();
+    },
+
+    async callAPI(mode) {
+      switch (mode) {
+        case "DOMAIN":
+          return await callAPI(
+            API_ROUTE.NEW_ALIAS,
+            {
+              hostname: this.hostName,
+            },
+            {
+              alias_prefix: this.aliasPrefix,
+              signed_suffix: this.signedSuffix[1],
+              note: await Utils.getDefaultNote(),
+            }
+          );
+        case "UUID":
+          return await callAPI(
+            API_ROUTE.NEW_RANDOM_ALIAS,
+            {
+              hostname: "",
+              mode: "uuid",
+            },
+            {
+              note: await Utils.getDefaultNote(),
+            }
+          );
+        case "WORDS":
+          return await callAPI(
+            API_ROUTE.NEW_RANDOM_ALIAS,
+            {
+              hostname: "",
+              mode: "word",
+            },
+            {
+              note: await Utils.getDefaultNote(),
+            }
+          );
+        case "RANDOM":
+          let signedParts = this.aliasSuffixes[0][1].split();
+          let prefix = signedParts[-1].replace(/[-_]/gi, "").substr(0, 10);
+          return await callAPI(
+            API_ROUTE.NEW_ALIAS,
+            {
+              hostname: "",
+            },
+            {
+              alias_prefix: prefix,
+              signed_suffix: this.signedSuffix[1],
+              note: await Utils.getDefaultNote(),
+            }
+          );
+      }
+    },
+
+    async createAlias(createMode) {
+      if (this.loading) return;
+      this.loading = true;
+
+      try {
+        const res = await callAPI(createMode);
+
+        if (res.status === 201) {
+          SLStorage.setTemporary("newAliasData", res.data);
+          SLStorage.setTemporary("userMailboxes", this.mailboxes);
+          Navigation.navigateTo(Navigation.PATH.NEW_ALIAS_RESULT);
+        } else {
+          Utils.showError(res.data.error);
+        }
+      } catch (err) {
+        // rate limit reached
+        if (err.response.status === 429) {
+          Utils.showError(
+            "Rate limit exceeded - please wait 60s before creating new alias"
+          );
+        } else if (err.response.status === 409) {
+          Utils.showError("Alias already chosen, please select another one");
+        } else if (err.response.status === 412) {
+          // can happen when the alias creation time slot is expired,
+          // i.e user waits for too long before creating the alias
+          Utils.showError(err.response.data.error);
+
+          // get new aliasSuffixes
+          this.getAliasOptions();
+        } else {
+          Utils.showError("Unknown error");
+        }
+      }
+
+      this.loading = false;
     },
 
     async createCustomAlias() {
